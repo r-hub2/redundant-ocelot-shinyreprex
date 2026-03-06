@@ -1,0 +1,34 @@
+Package: shinyreprex
+Type: Package
+Title: Reproducible Code for 'Shiny' Objects
+Version: 0.1.0
+Authors@R: c(person("Ashley", "Baldry", email = "ashley.baldry@acuityanalytics.com", role = c("aut", "cre")))
+Description: Provides functionality to extract reactive expressions from a 'Shiny' application and 
+    convert them into stand-alone R scripts. This enables users to reproduce tables and visualisations 
+    outside the interactive UI, facilitating integration into static reports or automated workflows 
+    without requiring access to the original application source code.
+License: MIT + file LICENSE
+URL: https://github.com/AscentSoftware/shinyreprex,
+        https://ascentsoftware.github.io/shinyreprex/
+BugReports: https://github.com/AscentSoftware/shinyreprex/issues
+Depends: R (>= 4.3.0)
+Imports: S7, constructive, purrr, rlang, styler
+Suggests: knitr, rmarkdown, shiny, spelling, testthat (>= 3.0.0)
+Language: en-GB
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Config/testthat/edition: 3
+Config/Needs/website: ascentsoftware/ascentdown
+VignetteBuilder: knitr
+Collate: 'Repro_S7.R' 'S7_utils.R' 'repro_call_chunk.R'
+        'call_chunk_function.R' 'call_chunk_generic.R'
+        'call_chunk_if.R' 'call_chunk_null.R' 'call_chunk_reactive.R'
+        'call_chunk_reactval.R' 'call_chunk_shiny.R'
+        'call_chunk_subset.R' 'call_chunk_utils.R' 'repro_chunk.R'
+        'chunk_call.R' 'chunk_generic.R' 'chunk_reactive.R' 'package.R'
+        'reprex_reactive.R'
+NeedsCompilation: no
+Packaged: 2026-03-06 13:58:08 UTC; ashley.baldry
+Author: Ashley Baldry [aut, cre]
+Maintainer: Ashley Baldry <ashley.baldry@acuityanalytics.com>
