@@ -34,12 +34,24 @@ is_reactive_val_call <- function(x, env = rlang::caller_env()) {
 }
 
 #' @description
+#' `is_reactive_val_setter_call` checks whether or not the call is setting the value
+#' of a `shiny::reactiveVal` variable.
+#'
+#' @rdname call_chunk_checks
+is_reactive_val_setter_call <- function(x, env = rlang::caller_env()) {
+  rlang::is_call(x) &&
+    length(rlang::call_args(x)) == 1L &&
+    rlang::call_name(x) %in% names(env) &&
+    inherits(env[[rlang::call_name(x)]], "reactiveVal")
+}
+
+#' @description
 #' `is_reactive_values_call` checks whether or not the call is evaluating an item
 #' within a `shiny::reactiveValues` variable.
 #'
 #' @rdname call_chunk_checks
 is_reactive_values_call <- function(x, env = rlang::caller_env()) {
-  rlang::is_call(x, "$") &&
+  (rlang::is_call(x, "$") || rlang::is_call(x, "[[")) &&
     tryCatch(inherits(get(rlang::call_args(x)[[1]], envir = env), "reactivevalues"), error = \(e) FALSE) &&
     as.character(rlang::call_args(x)[[1]]) != "input"
 }
@@ -71,7 +83,7 @@ is_variable_call <- function(x, existing_vars = NULL, env = rlang::caller_env())
 #'
 #' @rdname call_chunk_checks
 is_input_call <- function(x) {
-  rlang::is_call(x, "$") &&
+  (rlang::is_call(x, "$") || rlang::is_call(x, "[[")) &&
     startsWith(as.character(x)[[2]], "input")
 }
 
@@ -81,7 +93,7 @@ is_input_call <- function(x) {
 #'
 #' @rdname call_chunk_checks
 is_session_user_data <- function(x) {
-  rlang::is_call(x, "$") &&
+  (rlang::is_call(x, "$") || rlang::is_call(x, "[[")) &&
     startsWith(as.character(x)[[2]], "session$userData")
 }
 
@@ -103,7 +115,7 @@ assign_reactive_call <- function(x, repro_call) {
 #' Get Call Package Name
 #'
 #' @noRd
-get_pkg_name <- function(x, base_pkgs = NULL) {
+get_pkg_name <- function(x, base_pkgs = BASE_PKGS) {
   if (rlang::is_call(x[[1]], "::")) return(as.character(x[[1]][[2]]))
 
   pkg_name <- tryCatch(
@@ -111,16 +123,14 @@ get_pkg_name <- function(x, base_pkgs = NULL) {
     error = \(e) NULL
   )
 
-  if (is.null(base_pkgs)) {
-    base_pkgs <- rownames(utils::installed.packages(priority = "base"))
-  }
-
   if (is.null(pkg_name) || pkg_name %in% base_pkgs) {
     NULL
   } else {
     pkg_name
   }
 }
+
+BASE_PKGS <- c("base", "stats", "graphics", "utils", "grDevices", "datasets", "methods")
 
 #' Construct Reactive Value
 #'
